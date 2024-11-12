@@ -1,0 +1,31 @@
+{
+  "name": "harmony-ui",
+  "version": "0.0.1",
+  "description": "A sophisticated design system built on Radix UI with fluid animations powered by Framer Motion",
+  "main": "index.js",
+  "private": true,
+  "packageManager": "pnpm@9.12.1",
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "lint:fix": "turbo run lint:fix",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,md}\"",
+    "test": "turbo run test",
+    "clean": "turbo run clean"
+  },
+  "keywords": [],
+  "author": "joseph0926",
+  "license": "ISC",
+  "devDependencies": {
+    "@changesets/cli": "^2.27.9",
+    "prettier": "^3.3.3",
+    "turbo": "^2.2.3",
+    "typescript": "^5.6.3"
+  },
+  "engines": {
+    "node": ">=21",
+    "pnpm": ">=9"
+  }
+}
