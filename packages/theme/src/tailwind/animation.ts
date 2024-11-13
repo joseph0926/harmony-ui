@@ -7,14 +7,14 @@ export const animationConfig = {
         ...acc,
         [key]: `cubic-bezier(${value.join(",")})`,
       }),
-      {}
+      {},
     ),
     transitionDuration: Object.entries(motionDurations).reduce(
       (acc, [key, value]) => ({
         ...acc,
         [key]: `${value * 1000}ms`,
       }),
-      {}
+      {},
     ),
     keyframes: {
       fadeIn: {

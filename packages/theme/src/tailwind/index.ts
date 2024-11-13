@@ -6,8 +6,9 @@ import {
   lightThemeColors,
   darkThemeColors,
 } from "../constants/colors";
-import { typography } from "../constants/typography";
 import { spacing } from "../constants/spacing";
+import { typography } from "../constants/typography";
+
 import { animationConfig } from "./animation";
 
 export default {
@@ -54,7 +55,7 @@ export default {
               ...acc,
               [`--${key}`]: value,
             }),
-            {}
+            {},
           ),
         },
         ".dark": {
@@ -63,7 +64,7 @@ export default {
               ...acc,
               [`--${key}`]: value,
             }),
-            {}
+            {},
           ),
         },
       });

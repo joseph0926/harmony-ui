@@ -370,7 +370,7 @@ export const componentPresets = {
 
 export const createStaggerVariants = (
   staggerChildren = 0.05,
-  delayStart = 0
+  delayStart = 0,
 ) => ({
   initial: { opacity: 0 },
   animate: {
