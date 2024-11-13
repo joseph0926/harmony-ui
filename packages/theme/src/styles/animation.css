@@ -1,0 +1,75 @@
+@layer base {
+  :root {
+    --duration-instant: 100ms;
+    --duration-fast: 200ms;
+    --duration-normal: 300ms;
+    --duration-slow: 500ms;
+    --duration-slower: 700ms;
+    --duration-slowest: 1000ms;
+
+    --ease-default: cubic-bezier(0.25, 0.1, 0.25, 1);
+    --ease-out: cubic-bezier(0, 0, 0.2, 1);
+    --ease-in: cubic-bezier(0.4, 0, 1, 1);
+    --ease-bouncy: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    --ease-natural: cubic-bezier(0.6, 0.01, -0.05, 0.9);
+  }
+}
+
+@layer utilities {
+  @media (prefers-reduced-motion: no-preference) {
+    .animate-in {
+      animation-duration: var(--duration-normal);
+      animation-timing-function: var(--ease-default);
+      animation-fill-mode: both;
+    }
+
+    .animate-out {
+      animation-duration: var(--duration-normal);
+      animation-timing-function: var(--ease-default);
+      animation-fill-mode: both;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .animate-in,
+    .animate-out {
+      animation: none !important;
+      transition: none !important;
+    }
+  }
+
+  .duration-instant {
+    transition-duration: var(--duration-instant);
+  }
+  .duration-fast {
+    transition-duration: var(--duration-fast);
+  }
+  .duration-normal {
+    transition-duration: var(--duration-normal);
+  }
+  .duration-slow {
+    transition-duration: var(--duration-slow);
+  }
+  .duration-slower {
+    transition-duration: var(--duration-slower);
+  }
+  .duration-slowest {
+    transition-duration: var(--duration-slowest);
+  }
+
+  .ease-default {
+    transition-timing-function: var(--ease-default);
+  }
+  .ease-out {
+    transition-timing-function: var(--ease-out);
+  }
+  .ease-in {
+    transition-timing-function: var(--ease-in);
+  }
+  .ease-bouncy {
+    transition-timing-function: var(--ease-bouncy);
+  }
+  .ease-natural {
+    transition-timing-function: var(--ease-natural);
+  }
+}
