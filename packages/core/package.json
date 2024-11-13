@@ -19,6 +19,7 @@
     "clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist"
   },
   "devDependencies": {
+    "@types/node": "^22.9.0",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "eslint": "^9.14.0",
@@ -27,6 +28,8 @@
     "typescript": "^5.6.3"
   },
   "dependencies": {
+    "@harmony-ui/animations": "workspace:*",
+    "@harmony-ui/theme": "workspace:*",
     "@radix-ui/react-accordion": "^1.2.1",
     "@radix-ui/react-alert-dialog": "^1.1.2",
     "@radix-ui/react-avatar": "^1.1.1",

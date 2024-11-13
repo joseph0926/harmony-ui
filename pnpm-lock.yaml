@@ -48,6 +48,12 @@ importers:
 
   packages/core:
     dependencies:
+      '@harmony-ui/animations':
+        specifier: workspace:*
+        version: link:../animations
+      '@harmony-ui/theme':
+        specifier: workspace:*
+        version: link:../theme
       '@radix-ui/react-accordion':
         specifier: ^1.2.1
         version: 1.2.1(@types/react-dom@18.3.1)(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -103,6 +109,9 @@ importers:
         specifier: ^2.5.4
         version: 2.5.4
     devDependencies:
+      '@types/node':
+        specifier: ^22.9.0
+        version: 22.9.0
       '@types/react':
         specifier: ^18.3.12
         version: 18.3.12
