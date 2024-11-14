@@ -5,5 +5,4 @@ export * from "./constants/typography";
 
 export { default as tailwindConfig } from "./tailwind";
 
-import "./styles/animation.css";
-import "./styles/base.css";
+import "./styles/index.css";

@@ -1,5 +1,18 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 @layer base {
   :root {
+    --surface: 0 0% 100%;
+    --surface-hover: 0 0% 98%;
+    --surface-active: 0 0% 96%;
+    --content: 240 10% 10%;
+    --content-subtle: 240 5% 35%;
+    --content-muted: 240 5% 65%;
+    --primary-50: 240 100% 98%;
+    --primary-100: 240 95% 94%;
+
     --duration-instant: 100ms;
     --duration-fast: 200ms;
     --duration-normal: 300ms;
@@ -12,6 +25,26 @@
     --ease-in: cubic-bezier(0.4, 0, 1, 1);
     --ease-bouncy: cubic-bezier(0.175, 0.885, 0.32, 1.275);
     --ease-natural: cubic-bezier(0.6, 0.01, -0.05, 0.9);
+  }
+
+  .dark {
+    --surface: 240 10% 10%;
+    --surface-hover: 240 10% 12%;
+    --surface-active: 240 10% 14%;
+    --content: 0 0% 98%;
+    --content-subtle: 0 0% 80%;
+    --content-muted: 0 0% 60%;
+  }
+}
+
+@layer components {
+  .animate-in {
+    animation-delay: 0ms;
+    animation-fill-mode: both;
+  }
+
+  .animate-out {
+    animation-fill-mode: both;
   }
 }
 
@@ -27,14 +60,6 @@
       animation-duration: var(--duration-normal);
       animation-timing-function: var(--ease-default);
       animation-fill-mode: both;
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .animate-in,
-    .animate-out {
-      animation: none !important;
-      transition: none !important;
     }
   }
 
@@ -71,5 +96,22 @@
   }
   .ease-natural {
     transition-timing-function: var(--ease-natural);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .animate-in,
+  .animate-out {
+    animation: none !important;
+    transition: none !important;
   }
 }
