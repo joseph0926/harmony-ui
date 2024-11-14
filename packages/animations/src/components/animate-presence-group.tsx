@@ -31,7 +31,7 @@ export const AnimatePresenceGroup = forwardRef<
       delayChildren,
       ...props
     },
-    ref
+    ref,
   ) => {
     const { getContainerVariants, getItemVariants } = useStaggerAnimation({
       staggerChildren,
@@ -77,7 +77,7 @@ export const AnimatePresenceGroup = forwardRef<
         <motion.div {...motionProps}>{renderChildren()}</motion.div>
       </AnimatePresence>
     );
-  }
+  },
 );
 
 AnimatePresenceGroup.displayName = "AnimatePresenceGroup";

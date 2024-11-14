@@ -1,8 +1,5 @@
 "use client";
 
-import * as React from "react";
-import * as DialogPrimitive from "@radix-ui/react-dialog";
-import { X } from "lucide-react";
 import {
   AnimatePresenceGroup,
   AnimateMount,
@@ -10,7 +7,11 @@ import {
   useReducedMotion,
   AnimatePresenceGroupProps,
 } from "@harmony-ui/animations";
+import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { AnimatePresence, motion } from "framer-motion";
+import { X } from "lucide-react";
+import * as React from "react";
+
 import { cn } from "../../utils/cn";
 
 const Dialog = DialogPrimitive.Root;
@@ -45,7 +46,7 @@ const DialogOverlay = React.forwardRef<
         "fixed inset-0 z-50",
         "bg-black/40 backdrop-blur-sm dark:bg-black/60",
         "duration-normal ease-natural",
-        className
+        className,
       )}
       {...props}
       asChild
@@ -77,7 +78,7 @@ const DialogContent = React.forwardRef<
 >(
   (
     { className, children, size = "md", position = "center", ...props },
-    ref
+    ref,
   ) => {
     const prefersReducedMotion = useReducedMotion();
 
@@ -135,7 +136,7 @@ const DialogContent = React.forwardRef<
             "border-neutral-200 dark:border-neutral-800",
             position === "bottom" ? "rounded-t-lg sm:rounded-lg" : "rounded-lg",
             "duration-normal ease-natural",
-            className
+            className,
           )}
           {...props}
           asChild
@@ -152,7 +153,7 @@ const DialogContent = React.forwardRef<
         </DialogPrimitive.Content>
       </DialogPortal>
     );
-  }
+  },
 );
 DialogContent.displayName = DialogPrimitive.Content.displayName;
 
@@ -170,7 +171,7 @@ const DialogClose = React.forwardRef<
       "disabled:pointer-events-none",
       "text-neutral-500 hover:text-neutral-700",
       "dark:text-neutral-400 dark:hover:text-neutral-200",
-      className
+      className,
     )}
     {...props}
   >
@@ -185,7 +186,7 @@ const DialogClose = React.forwardRef<
         exit: { opacity: 0, scale: 0.8 },
       }}
     >
-      <X className="h-4 w-4" />
+      <X className="size-4" />
       <span
         className={cn("sr-only", "text-neutral-900", "dark:text-neutral-50")}
       >
@@ -249,7 +250,7 @@ const DialogFooter = React.forwardRef<
       className={cn(
         "flex flex-col-reverse gap-2",
         "sm:flex-row sm:justify-end sm:gap-2",
-        className
+        className,
       )}
       customVariants={getContainerVariants()}
     >
@@ -279,7 +280,7 @@ const DialogTitle = React.forwardRef<
     className={cn(
       "text-lg font-semibold leading-none tracking-tight",
       "text-content dark:text-content",
-      className
+      className,
     )}
     {...props}
   />
@@ -295,7 +296,7 @@ const DialogDescription = React.forwardRef<
     className={cn(
       "text-sm",
       "text-content-subtle dark:text-content-subtle",
-      className
+      className,
     )}
     {...props}
   />

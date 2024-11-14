@@ -7,7 +7,7 @@ interface UseStaggerAnimationOptions {
 }
 
 export const useStaggerAnimation = (
-  options: UseStaggerAnimationOptions = {}
+  options: UseStaggerAnimationOptions = {},
 ) => {
   const { staggerChildren = 0.05, delayChildren = 0 } = options;
 
@@ -34,7 +34,7 @@ export const useStaggerAnimation = (
         },
       },
     }),
-    [staggerChildren, delayChildren]
+    [staggerChildren, delayChildren],
   );
 
   const getItemVariants = useCallback(
@@ -68,7 +68,7 @@ export const useStaggerAnimation = (
         },
       },
     }),
-    []
+    [],
   );
 
   return {
