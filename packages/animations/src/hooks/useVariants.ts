@@ -1,28 +1,14 @@
-import { type Variants, type Variant } from "framer-motion";
+import { type Variants } from "framer-motion";
 import { useMemo } from "react";
-
-type DeepPartial<T> = {
-  [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P];
-};
+import { merge } from "lodash";
 
 export const useVariants = (
   baseVariants: Variants,
-  customVariants?: DeepPartial<Variants>,
+  customVariants?: Partial<Variants>
 ): Variants => {
   return useMemo(() => {
     if (!customVariants) return baseVariants;
 
-    const merged = { ...baseVariants };
-
-    Object.entries(customVariants).forEach(([key, value]) => {
-      if (value && typeof value === "object") {
-        merged[key] = {
-          ...(merged[key] as Variant),
-          ...value,
-        } as Variant;
-      }
-    });
-
-    return merged;
+    return merge({}, baseVariants, customVariants);
   }, [baseVariants, customVariants]);
 };

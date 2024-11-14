@@ -1,10 +1,9 @@
 import { motion, type Variants } from "framer-motion";
 import React from "react";
-
-import { useReducedMotion } from "../hooks/useReducedMotion";
+import { useAnimationState } from "../hooks/useAnimationState";
 
 interface AnimateListProps {
-  children: React.ReactNode[];
+  children: React.ReactNode;
   className?: string;
   itemClassName?: string;
   variants?: Variants;
@@ -20,18 +19,12 @@ export const AnimateList = ({
   staggerChildren = 0.05,
   delayChildren = 0,
 }: AnimateListProps) => {
-  const prefersReducedMotion = useReducedMotion();
+  const { prefersReducedMotion } = useAnimationState();
+
+  const childArray = React.Children.toArray(children);
 
   if (prefersReducedMotion) {
-    return (
-      <div className={className}>
-        {children.map((child, i) => (
-          <div key={i} className={itemClassName}>
-            {child}
-          </div>
-        ))}
-      </div>
-    );
+    return <div className={className}>{children}</div>;
   }
 
   const defaultVariants: Variants = {
@@ -64,15 +57,17 @@ export const AnimateList = ({
       variants={variants ?? defaultVariants}
       className={className}
     >
-      {children.map((child, i) => (
-        <motion.div
-          key={i}
-          variants={defaultChildVariants}
-          className={itemClassName}
-        >
-          {child}
-        </motion.div>
-      ))}
+      {childArray.map((child) =>
+        child ? (
+          <motion.div
+            key={(child as React.ReactElement).key}
+            variants={defaultChildVariants}
+            className={itemClassName}
+          >
+            {child}
+          </motion.div>
+        ) : null
+      )}
     </motion.div>
   );
 };

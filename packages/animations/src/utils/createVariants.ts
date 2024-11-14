@@ -1,4 +1,5 @@
 import { type Variants, type Transition } from "framer-motion";
+import { merge } from "lodash";
 
 interface CreateVariantsOptions {
   transition?: Transition;
@@ -7,18 +8,13 @@ interface CreateVariantsOptions {
 
 export const createVariants = (
   variants: Omit<Variants, "transition">,
-  options?: CreateVariantsOptions,
+  options?: CreateVariantsOptions
 ): Variants => {
   const { transition, exitTransition } = options ?? {};
 
-  return Object.entries(variants).reduce(
-    (acc, [key, value]) => ({
-      ...acc,
-      [key]: {
-        ...value,
-        transition: key === "exit" ? exitTransition : transition,
-      },
-    }),
-    {},
-  );
+  return Object.entries(variants).reduce((acc, [key, value]) => {
+    const variantTransition = key === "exit" ? exitTransition : transition;
+    acc[key] = merge({}, value, { transition: variantTransition });
+    return acc;
+  }, {} as Variants);
 };

@@ -1,17 +1,18 @@
 import { MotionConfig as FramerMotionConfig } from "framer-motion";
 import React from "react";
+import { useAnimationContext } from "../providers/animation.provider";
 
 interface MotionConfigProps {
   children: React.ReactNode;
-  reducedMotion?: "never" | "always" | "user";
 }
 
-export const MotionConfig = ({
-  children,
-  reducedMotion = "user",
-}: MotionConfigProps) => {
+export const MotionConfig = ({ children }: MotionConfigProps) => {
+  const { prefersReducedMotion } = useAnimationContext();
+
   return (
-    <FramerMotionConfig reducedMotion={reducedMotion}>
+    <FramerMotionConfig
+      reducedMotion={prefersReducedMotion ? "always" : "never"}
+    >
       {children}
     </FramerMotionConfig>
   );

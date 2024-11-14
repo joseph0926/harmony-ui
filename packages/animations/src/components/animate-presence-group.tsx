@@ -5,12 +5,11 @@ import {
   HTMLMotionProps,
 } from "framer-motion";
 import React, { forwardRef } from "react";
-
 import { useStaggerAnimation } from "../hooks/useStaggerAnimation";
 
 export interface AnimatePresenceGroupProps
   extends Omit<HTMLMotionProps<"div">, "children"> {
-  children: React.ReactNode[] | React.ReactNode;
+  children: React.ReactNode;
   itemClassName?: string;
   customVariants?: Variants;
   staggerChildren?: number;
@@ -31,7 +30,7 @@ export const AnimatePresenceGroup = forwardRef<
       delayChildren,
       ...props
     },
-    ref,
+    ref
   ) => {
     const { getContainerVariants, getItemVariants } = useStaggerAnimation({
       staggerChildren,
@@ -48,27 +47,23 @@ export const AnimatePresenceGroup = forwardRef<
       ...props,
     };
 
+    const childArray = React.Children.toArray(children);
+
     const renderChildren = () => {
-      if (!children) {
+      if (!childArray.length) {
         return null;
       }
 
-      if (Array.isArray(children)) {
-        return children.map((child, index) => (
+      return childArray.map((child) =>
+        child ? (
           <motion.div
-            key={index}
+            key={(child as React.ReactElement).key}
             className={itemClassName}
             variants={getItemVariants()}
           >
             {child}
           </motion.div>
-        ));
-      }
-
-      return (
-        <motion.div className={itemClassName} variants={getItemVariants()}>
-          {children}
-        </motion.div>
+        ) : null
       );
     };
 
@@ -77,7 +72,7 @@ export const AnimatePresenceGroup = forwardRef<
         <motion.div {...motionProps}>{renderChildren()}</motion.div>
       </AnimatePresence>
     );
-  },
+  }
 );
 
 AnimatePresenceGroup.displayName = "AnimatePresenceGroup";

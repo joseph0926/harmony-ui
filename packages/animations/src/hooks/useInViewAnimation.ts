@@ -1,46 +1,39 @@
-import { useAnimation, useInView } from "framer-motion";
+import { useAnimation } from "framer-motion";
+import { useInView } from "react-intersection-observer";
 import { useEffect } from "react";
-import type { RefObject } from "react";
-
-type MarginValue = `${number}${"px" | "%"}`;
-type MarginType =
-  | MarginValue
-  | `${MarginValue} ${MarginValue}`
-  | `${MarginValue} ${MarginValue} ${MarginValue}`
-  | `${MarginValue} ${MarginValue} ${MarginValue} ${MarginValue}`;
 
 interface UseInViewAnimationOptions {
-  root?: RefObject<Element>;
-  margin?: MarginType;
-  amount?: "some" | "all" | number;
-  once?: boolean;
+  rootMargin?: string;
+  threshold?: number | number[];
+  triggerOnce?: boolean;
   delay?: number;
 }
 
-export const useInViewAnimation = (
-  ref: RefObject<Element>,
-  options: UseInViewAnimationOptions = {},
-) => {
-  const { root, margin, amount = "some", once = true, delay = 0 } = options;
+export const useInViewAnimation = (options: UseInViewAnimationOptions = {}) => {
+  const {
+    rootMargin = "0px",
+    threshold = 0.1,
+    triggerOnce = true,
+    delay = 0,
+  } = options;
 
   const controls = useAnimation();
-  const isInView = useInView(ref, {
-    root,
-    margin,
-    amount,
-    once,
+  const [ref, inView] = useInView({
+    rootMargin,
+    threshold,
+    triggerOnce,
   });
 
   useEffect(() => {
-    if (isInView) {
-      setTimeout(() => {
-        controls.start("animate");
-      }, delay);
+    if (inView) {
+      controls.start("animate");
     }
-  }, [isInView, controls, delay]);
+  }, [inView, controls]);
 
   return {
+    ref,
     controls,
-    isInView,
+    inView,
+    delay,
   };
 };

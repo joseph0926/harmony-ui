@@ -1,7 +1,6 @@
 import { type Variants } from "framer-motion";
-import { type Transition } from "framer-motion";
-
 import { createVariants } from "../utils/createVariants";
+import { animationDurations, animationEasings } from "../constants/animation";
 
 export const fadeVariants = createVariants(
   {
@@ -11,19 +10,19 @@ export const fadeVariants = createVariants(
   },
   {
     transition: {
-      duration: 0.3,
-      ease: [0.16, 1, 0.3, 1],
+      duration: animationDurations.medium,
+      ease: animationEasings.easeOut,
     },
     exitTransition: {
-      duration: 0.2,
-      ease: [0.4, 0, 1, 1],
+      duration: animationDurations.short,
+      ease: animationEasings.easeIn,
     },
-  },
+  }
 );
 
 export const createSlideVariants = (
   direction: "up" | "down" | "left" | "right",
-  distance: number = 20,
+  distance: number = 20
 ): Variants => {
   const axis = direction === "up" || direction === "down" ? "y" : "x";
   const sign = direction === "up" || direction === "left" ? -1 : 1;
@@ -36,14 +35,14 @@ export const createSlideVariants = (
     },
     {
       transition: {
-        duration: 0.3,
-        ease: [0.16, 1, 0.3, 1],
+        duration: animationDurations.medium,
+        ease: animationEasings.natural,
       },
       exitTransition: {
-        duration: 0.2,
-        ease: [0.4, 0, 1, 1],
+        duration: animationDurations.short,
+        ease: animationEasings.easeIn,
       },
-    },
+    }
   );
 };
 
@@ -55,14 +54,14 @@ export const scaleVariants = createVariants(
   },
   {
     transition: {
-      duration: 0.3,
-      ease: [0.16, 1, 0.3, 1],
+      duration: animationDurations.medium,
+      ease: animationEasings.emphasized,
     },
     exitTransition: {
-      duration: 0.2,
-      ease: [0.4, 0, 1, 1],
+      duration: animationDurations.short,
+      ease: animationEasings.easeIn,
     },
-  },
+  }
 );
 
 export const popVariants = createVariants(
@@ -73,14 +72,14 @@ export const popVariants = createVariants(
   },
   {
     transition: {
-      duration: 0.3,
-      ease: [0.16, 1, 0.3, 1],
+      duration: animationDurations.medium,
+      ease: animationEasings.bounce,
     },
     exitTransition: {
-      duration: 0.2,
-      ease: [0.4, 0, 1, 1],
+      duration: animationDurations.short,
+      ease: animationEasings.easeIn,
     },
-  },
+  }
 );
 
 interface SpringConfig {
@@ -119,20 +118,18 @@ export const createSpring = (config: Partial<SpringConfig> = {}) => ({
 });
 
 interface CreateTransitionOptions {
-  duration?: number;
+  duration?: keyof typeof animationDurations;
   delay?: number;
-  ease?: number[];
+  ease?: keyof typeof animationEasings;
 }
 
-export const createTransition = (
-  options: CreateTransitionOptions = {},
-): Transition => {
-  const { duration = 0.3, delay = 0, ease = [0.16, 1, 0.3, 1] } = options;
+export const createTransition = (options: CreateTransitionOptions = {}) => {
+  const { duration = "medium", delay = 0, ease = "easeInOut" } = options;
 
   return {
-    duration,
+    duration: animationDurations[duration],
     delay,
-    ease,
+    ease: animationEasings[ease],
   };
 };
 

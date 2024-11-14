@@ -1,4 +1,4 @@
-import { motion, AnimatePresence, type Variants } from "framer-motion";
+import { motion, LayoutGroup, type Variants } from "framer-motion";
 import React from "react";
 
 interface AnimateSharedLayoutProps {
@@ -17,7 +17,7 @@ export const AnimateSharedLayout = ({
   className,
 }: AnimateSharedLayoutProps) => {
   return (
-    <AnimatePresence>
+    <LayoutGroup>
       {isPresent && (
         <motion.div
           layoutId={layoutId}
@@ -30,6 +30,6 @@ export const AnimateSharedLayout = ({
           {children}
         </motion.div>
       )}
-    </AnimatePresence>
+    </LayoutGroup>
   );
 };
