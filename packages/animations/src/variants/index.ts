@@ -2,6 +2,24 @@ import { type Variants } from "framer-motion";
 import { createVariants } from "../utils/createVariants";
 import { animationDurations, animationEasings } from "../constants/animation";
 
+export const slideUpVariants = createVariants(
+  {
+    initial: { y: 20, opacity: 0 },
+    animate: { y: 0, opacity: 1 },
+    exit: { y: 20, opacity: 0 },
+  },
+  {
+    transition: {
+      duration: animationDurations.medium,
+      ease: animationEasings.natural,
+    },
+    exitTransition: {
+      duration: animationDurations.short,
+      ease: animationEasings.easeIn,
+    },
+  }
+);
+
 export const fadeVariants = createVariants(
   {
     initial: { opacity: 0 },
