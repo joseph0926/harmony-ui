@@ -18,7 +18,7 @@ export const DialogDefault = () => {
           Open Dialog
         </button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent position="center">
         <DialogHeader>
           <DialogTitle>Example Dialog</DialogTitle>
           <DialogDescription>
@@ -30,7 +30,7 @@ export const DialogDefault = () => {
           <p>Dialog content goes here...</p>
         </div>
         <DialogFooter>
-          <button className="px-4 py-2 rounded bg-gray-200">Cancel</button>
+          <button className="px-4 py-2 rounded">Cancel</button>
           <button className="px-4 py-2 rounded bg-primary-500 text-white ml-2">
             Save
           </button>

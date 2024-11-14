@@ -1,3 +1,5 @@
+"use client";
+
 import * as React from "react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { X } from "lucide-react";
@@ -6,8 +8,9 @@ import {
   AnimateMount,
   useStaggerAnimation,
   useReducedMotion,
+  AnimatePresenceGroupProps,
 } from "@harmony-ui/animations";
-import { HTMLMotionProps, motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { cn } from "../../utils/cn";
 
 const Dialog = DialogPrimitive.Root;
@@ -17,7 +20,15 @@ const DialogPortal = ({
   children,
   ...props
 }: DialogPrimitive.DialogPortalProps) => (
-  <DialogPrimitive.Portal {...props}>{children}</DialogPrimitive.Portal>
+  <DialogPrimitive.Portal {...props}>
+    <div>
+      {React.Children.map(children, (child, index) => (
+        <AnimatePresence key={`dialog-portal-${index}`} mode="sync">
+          {child}
+        </AnimatePresence>
+      ))}
+    </div>
+  </DialogPrimitive.Portal>
 );
 DialogPortal.displayName = DialogPrimitive.Portal.displayName;
 
@@ -79,7 +90,7 @@ const DialogContent = React.forwardRef<
     };
 
     const positionClasses = {
-      center: "top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2",
+      center: "top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]",
       bottom: "bottom-0 left-0 right-0 translate-y-0 sm:bottom-4",
     };
 
@@ -152,7 +163,7 @@ const DialogClose = React.forwardRef<
   <DialogPrimitive.Close
     ref={ref}
     className={cn(
-      "absolute right-4 top-4",
+      "absolute right-0 top-0",
       "rounded-sm opacity-70",
       "hover:opacity-100",
       "focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2",
@@ -175,22 +186,25 @@ const DialogClose = React.forwardRef<
       }}
     >
       <X className="h-4 w-4" />
-      <span className="sr-only">Close</span>
+      <span
+        className={cn("sr-only", "text-neutral-900", "dark:text-neutral-50")}
+      >
+        Close
+      </span>
     </AnimateMount>
   </DialogPrimitive.Close>
 ));
 DialogClose.displayName = DialogPrimitive.Close.displayName;
 
 const DialogHeader = React.forwardRef<
-  HTMLMotionProps<"div">,
-  React.HTMLAttributes<HTMLMotionProps<"div">>
+  HTMLDivElement,
+  AnimatePresenceGroupProps
 >(({ className, children, ...props }, ref) => {
   const { getContainerVariants, getItemVariants } = useStaggerAnimation({
     staggerChildren: 0.1,
     delayChildren: 0.2,
   });
 
-  // React.Children.toArray를 사용하여 children을 배열로 변환
   const childrenArray = React.Children.toArray(children);
 
   return (
@@ -219,7 +233,7 @@ DialogHeader.displayName = "DialogHeader";
 
 const DialogFooter = React.forwardRef<
   HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
+  AnimatePresenceGroupProps
 >(({ className, children, ...props }, ref) => {
   const { getContainerVariants, getItemVariants } = useStaggerAnimation({
     staggerChildren: 0.05,

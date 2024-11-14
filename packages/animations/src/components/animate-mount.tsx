@@ -1,8 +1,6 @@
 import { motion, type Variants, type AnimationControls } from "framer-motion";
 import React from "react";
 
-import { useReducedMotion } from "../hooks/useReducedMotion";
-
 type VariantLabels = string | string[];
 type TargetAndTransition = Record<string, any>;
 
@@ -25,11 +23,12 @@ export const AnimateMount = ({
   className,
   transition,
 }: AnimateMountProps) => {
-  const prefersReducedMotion = useReducedMotion();
-
-  if (prefersReducedMotion) {
-    return <>{children}</>;
-  }
+  const transformTemplate = ({ scale, y }: any) => {
+    if (scale === 1 && y === 0) {
+      return "translate3d(0, 0, 0)";
+    }
+    return `translate3d(0, ${y}px, 0) scale(${scale})`;
+  };
 
   return (
     <motion.div
@@ -39,6 +38,7 @@ export const AnimateMount = ({
       variants={variants}
       className={className}
       transition={transition}
+      transformTemplate={transformTemplate}
     >
       {children}
     </motion.div>
