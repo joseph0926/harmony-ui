@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import React from "react";
 
-import { useReducedMotion } from "../hooks/useReducedMotion";
+import { useAnimationState } from "../hooks/useAnimationState";
 
 interface AnimateHeightProps {
   children: React.ReactNode;
@@ -16,7 +16,7 @@ export const AnimateHeight = ({
   duration = 0.3,
   className,
 }: AnimateHeightProps) => {
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = useAnimationState();
 
   if (prefersReducedMotion) {
     return isVisible ? <div className={className}>{children}</div> : null;
