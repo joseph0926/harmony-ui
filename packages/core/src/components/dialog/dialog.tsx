@@ -6,7 +6,11 @@ import { X } from "lucide-react";
 import { cn } from "../../utils";
 import { AnimatePresence, HTMLMotionProps, motion } from "framer-motion";
 import { useDialogAnimation } from "../../hooks/use-dialog";
-import { AnimateMount, AnimateList } from "@harmony-ui/animations";
+import {
+  AnimateMount,
+  AnimateList,
+  useAnimationContext,
+} from "@harmony-ui/animations";
 
 interface DialogContextValue {
   open: boolean;
@@ -71,7 +75,33 @@ interface DialogContentProps {
 
 const DialogContent = ({ children, className }: DialogContentProps) => {
   const { open } = useDialog();
+  const { prefersReducedMotion } = useAnimationContext();
   const { getOverlayVariants, getContentVariants } = useDialogAnimation();
+
+  const transformTemplate = ({
+    x = 0,
+    y = 0,
+    scale = 1,
+    rotateX = 0,
+    perspective = 1000,
+  }: any) => {
+    const transforms = [];
+
+    if (perspective !== 1000) {
+      transforms.push(`perspective(${perspective}px)`);
+    }
+
+    transforms.push(
+      `translate3d(${typeof x === "string" ? x : `${x}px`}, ${
+        typeof y === "string" ? y : `${y}px`
+      }, 0px)`
+    );
+
+    if (scale !== 1) transforms.push(`scale3d(${scale}, ${scale}, 1)`);
+    if (rotateX) transforms.push(`rotateX(${rotateX}deg)`);
+
+    return transforms.length ? transforms.join(" ") : "none";
+  };
 
   return (
     <AnimatePresence>
@@ -79,7 +109,11 @@ const DialogContent = ({ children, className }: DialogContentProps) => {
         <RadixDialog.Portal forceMount>
           <RadixDialog.Overlay asChild>
             <motion.div
-              className="fixed inset-0 z-50 bg-black/50"
+              className={cn(
+                "fixed inset-0 z-50",
+                "bg-black/50 backdrop-blur-[8px]",
+                "will-change-[opacity,backdrop-filter]"
+              )}
               variants={getOverlayVariants()}
               initial="initial"
               animate="animate"
@@ -89,35 +123,58 @@ const DialogContent = ({ children, className }: DialogContentProps) => {
 
           <RadixDialog.Content asChild>
             <motion.div
-              variants={getContentVariants()}
+              variants={prefersReducedMotion ? undefined : getContentVariants()}
               initial="initial"
               animate="animate"
               exit="exit"
+              transformTemplate={transformTemplate}
               className={cn(
-                "fixed left-[50%] top-[50%] z-50 w-full max-w-lg -translate-x-1/2 -translate-y-1/2",
-                "bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6",
-                "origin-[50%_50%]",
+                "fixed left-[50%] top-[50%] z-50 w-full max-w-lg",
+                "translate-x-[-50%] translate-y-[-50%]",
+                "bg-white/90 dark:bg-gray-800/90 backdrop-blur-xl",
+                "rounded-lg shadow-lg p-6",
+                "will-change-transform",
+                "transform-gpu",
+                "contain-paint",
+                "motion-reduce:transform-none",
                 className
               )}
+              style={{
+                perspective: 1000,
+                backfaceVisibility: "hidden",
+                WebkitFontSmoothing: "antialiased",
+                WebkitBackfaceVisibility: "hidden",
+                WebkitPerspective: 1000,
+                WebkitTransformStyle: "preserve-3d",
+              }}
             >
-              <AnimateList staggerChildren={0.05} delayChildren={0.1}>
-                {children}
-              </AnimateList>
-
-              <AnimateMount>
-                <RadixDialog.Close
-                  className={cn(
-                    "absolute right-4 top-4 rounded-sm opacity-70",
-                    "transition-all duration-200",
-                    "hover:opacity-100 hover:rotate-90",
-                    "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
-                    "disabled:pointer-events-none"
-                  )}
+              <div className="relative w-full h-full overflow-auto overscroll-contain">
+                <AnimateList
+                  staggerChildren={0.05}
+                  delayChildren={0.1}
+                  className="space-y-4"
                 >
-                  <X className="h-4 w-4" />
-                  <span className="sr-only">Close</span>
-                </RadixDialog.Close>
-              </AnimateMount>
+                  {children}
+                </AnimateList>
+
+                <AnimateMount>
+                  <RadixDialog.Close
+                    className={cn(
+                      "absolute right-4 top-4 rounded-full p-2",
+                      "opacity-70 ring-offset-white",
+                      "transition-all duration-200",
+                      "hover:opacity-100 hover:rotate-90",
+                      "focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2",
+                      "disabled:pointer-events-none",
+                      "transform-gpu",
+                      "motion-reduce:transform-none"
+                    )}
+                  >
+                    <X className="h-4 w-4" />
+                    <span className="sr-only">Close</span>
+                  </RadixDialog.Close>
+                </AnimateMount>
+              </div>
             </motion.div>
           </RadixDialog.Content>
         </RadixDialog.Portal>
@@ -134,6 +191,8 @@ const DialogHeader = ({ className, ...props }: HTMLMotionProps<"div">) => {
       variants={getChildVariants()}
       className={cn(
         "flex flex-col space-y-1.5 text-center sm:text-left",
+        "will-change-transform",
+        "transform-gpu",
         className
       )}
       {...props}
@@ -149,6 +208,8 @@ const DialogFooter = ({ className, ...props }: HTMLMotionProps<"div">) => {
       variants={getChildVariants()}
       className={cn(
         "flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2",
+        "will-change-transform",
+        "transform-gpu",
         className
       )}
       {...props}
@@ -156,42 +217,35 @@ const DialogFooter = ({ className, ...props }: HTMLMotionProps<"div">) => {
   );
 };
 
-type DialogTitleProps = React.ComponentProps<typeof RadixDialog.Title> & {
-  className?: string;
-};
+const DialogTitle = React.forwardRef<
+  HTMLHeadingElement,
+  React.ComponentProps<typeof RadixDialog.Title> & { className?: string }
+>(({ className, children, ...props }, ref) => {
+  const { getChildVariants } = useDialogAnimation();
 
-const DialogTitle = React.forwardRef<HTMLHeadingElement, DialogTitleProps>(
-  ({ className, children, ...props }, ref) => {
-    const { getChildVariants } = useDialogAnimation();
-
-    return (
-      <RadixDialog.Title asChild {...props}>
-        <motion.h2
-          ref={ref}
-          variants={getChildVariants()}
-          className={cn(
-            "text-lg font-semibold leading-none tracking-tight",
-            className
-          )}
-        >
-          {children}
-        </motion.h2>
-      </RadixDialog.Title>
-    );
-  }
-);
+  return (
+    <RadixDialog.Title asChild {...props}>
+      <motion.h2
+        ref={ref}
+        variants={getChildVariants()}
+        className={cn(
+          "text-lg font-semibold leading-none tracking-tight",
+          "will-change-transform",
+          "transform-gpu",
+          className
+        )}
+      >
+        {children}
+      </motion.h2>
+    </RadixDialog.Title>
+  );
+});
 
 DialogTitle.displayName = "DialogTitle";
 
-type DialogDescriptionProps = React.ComponentProps<
-  typeof RadixDialog.Description
-> & {
-  className?: string;
-};
-
 const DialogDescription = React.forwardRef<
   HTMLParagraphElement,
-  DialogDescriptionProps
+  React.ComponentProps<typeof RadixDialog.Description> & { className?: string }
 >(({ className, children, ...props }, ref) => {
   const { getChildVariants } = useDialogAnimation();
 
@@ -200,7 +254,12 @@ const DialogDescription = React.forwardRef<
       <motion.p
         ref={ref}
         variants={getChildVariants()}
-        className={cn("text-sm text-muted-foreground", className)}
+        className={cn(
+          "text-sm text-muted-foreground",
+          "will-change-transform",
+          "transform-gpu",
+          className
+        )}
       >
         {children}
       </motion.p>

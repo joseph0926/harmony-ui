@@ -6,14 +6,16 @@ export const dialogContentVariants: Variants = {
     opacity: 0,
     scale: 0.85,
     y: 20,
+    perspective: 1000,
     rotateX: 10,
-    transformPerspective: 1000,
+    filter: "blur(4px)",
   },
   animate: {
     opacity: 1,
     scale: 1,
     y: 0,
     rotateX: 0,
+    filter: "blur(0px)",
     transition: {
       duration: animationDurations.medium,
       ease: animationEasings.emphasized,
@@ -26,6 +28,7 @@ export const dialogContentVariants: Variants = {
     scale: 0.85,
     y: -20,
     rotateX: -10,
+    filter: "blur(4px)",
     transition: {
       duration: animationDurations.short,
       ease: animationEasings.easeIn,
@@ -64,11 +67,13 @@ export const dialogChildVariants: Variants = {
     opacity: 0,
     y: 10,
     scale: 0.95,
+    filter: "blur(4px)",
   },
   animate: {
     opacity: 1,
     y: 0,
     scale: 1,
+    filter: "blur(0px)",
     transition: {
       duration: animationDurations.short,
       ease: animationEasings.natural,
@@ -78,6 +83,7 @@ export const dialogChildVariants: Variants = {
     opacity: 0,
     y: -10,
     scale: 0.95,
+    filter: "blur(4px)",
     transition: {
       duration: animationDurations.short,
       ease: animationEasings.easeIn,

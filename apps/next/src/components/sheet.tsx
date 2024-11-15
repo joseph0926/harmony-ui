@@ -5,24 +5,22 @@ import { Sheet } from "@harmony-ui/core";
 
 export const CustomSheet = () => {
   return (
-    <Sheet
-      trigger={
-        <button className="px-4 py-2 bg-green-600 text-white rounded-md">
-          Open Sheet
-        </button>
-      }
-    >
-      <SheetContent />
+    <Sheet direction="bottom">
+      <Sheet.Trigger asChild>
+        <button>Open Sheet</button>
+      </Sheet.Trigger>
+      <Sheet.Content>
+        <Sheet.Header>
+          <Sheet.Title>Sheet Title</Sheet.Title>
+          <Sheet.Description>
+            This is a description of the sheet.
+          </Sheet.Description>
+        </Sheet.Header>
+        <div>Your content here</div>
+        <Sheet.Footer>
+          <button>Action</button>
+        </Sheet.Footer>
+      </Sheet.Content>
     </Sheet>
   );
 };
-
-const SheetContent = () => (
-  <div>
-    <h2 className="text-xl font-semibold">Sheet Title</h2>
-    <p className="mt-2">This is the content of the sheet.</p>
-    <button className="mt-4 px-4 py-2 bg-red-600 text-white rounded-md">
-      Close
-    </button>
-  </div>
-);
