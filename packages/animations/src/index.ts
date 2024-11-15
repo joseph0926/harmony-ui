@@ -19,4 +19,6 @@ export * from "./providers/withAnimation";
 
 export * from "./utils/createVariants";
 
+export * from "./constants/animation";
+
 export * from "./variants";
