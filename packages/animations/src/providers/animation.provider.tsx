@@ -1,3 +1,5 @@
+"use client";
+
 import React, { createContext, useContext } from "react";
 import { useReducedMotion } from "framer-motion";
 
@@ -7,6 +9,7 @@ interface AnimationContextProps {
     duration: number;
     ease: number[];
   };
+  animationEnabled: boolean;
 }
 
 const AnimationContext = createContext<AnimationContextProps | undefined>(
@@ -26,6 +29,7 @@ export const AnimationProvider = ({
       duration: 0.3,
       ease: [0.16, 1, 0.3, 1],
     },
+    animationEnabled: !prefersReducedMotion,
   };
 
   return (

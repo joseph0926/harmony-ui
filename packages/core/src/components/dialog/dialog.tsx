@@ -1,317 +1,220 @@
 "use client";
 
-import {
-  AnimatePresenceGroup,
-  AnimateMount,
-  useStaggerAnimation,
-  useReducedMotion,
-  AnimatePresenceGroupProps,
-} from "@harmony-ui/animations";
-import * as DialogPrimitive from "@radix-ui/react-dialog";
-import { AnimatePresence, motion } from "framer-motion";
-import { X } from "lucide-react";
 import * as React from "react";
+import * as RadixDialog from "@radix-ui/react-dialog";
+import { X } from "lucide-react";
+import { cn } from "../../utils";
+import { AnimatePresence, HTMLMotionProps, motion } from "framer-motion";
+import { useDialogAnimation } from "../../hooks/use-dialog";
+import { AnimateMount, AnimateList } from "@harmony-ui/animations";
 
-import { cn } from "../../utils/cn";
+interface DialogContextValue {
+  open: boolean;
+}
 
-const Dialog = DialogPrimitive.Root;
-const DialogTrigger = DialogPrimitive.Trigger;
+const DialogContext = React.createContext<DialogContextValue>({ open: false });
 
-const DialogPortal = ({
+const useDialog = () => {
+  const context = React.useContext(DialogContext);
+  if (!context) {
+    throw new Error("useDialog must be used within a DialogProvider");
+  }
+  return context;
+};
+
+interface DialogProps {
+  children: React.ReactNode;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+}
+
+const Dialog = ({
   children,
-  ...props
-}: DialogPrimitive.DialogPortalProps) => (
-  <DialogPrimitive.Portal {...props}>
-    <div>
-      {React.Children.map(children, (child, index) => (
-        <AnimatePresence key={`dialog-portal-${index}`} mode="sync">
-          {child}
-        </AnimatePresence>
-      ))}
-    </div>
-  </DialogPrimitive.Portal>
-);
-DialogPortal.displayName = DialogPrimitive.Portal.displayName;
+  open: controlledOpen,
+  onOpenChange,
+}: DialogProps) => {
+  const [uncontrolledOpen, setUncontrolledOpen] = React.useState(false);
+  const open = controlledOpen ?? uncontrolledOpen;
 
-const DialogOverlay = React.forwardRef<
-  React.ElementRef<typeof DialogPrimitive.Overlay>,
-  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Overlay>
->(({ className, ...props }, ref) => {
-  const prefersReducedMotion = useReducedMotion();
+  const handleOpenChange = React.useCallback(
+    (newOpen: boolean) => {
+      setUncontrolledOpen(newOpen);
+      onOpenChange?.(newOpen);
+    },
+    [onOpenChange]
+  );
 
   return (
-    <DialogPrimitive.Overlay
-      ref={ref}
+    <DialogContext.Provider value={{ open }}>
+      <RadixDialog.Root open={open} onOpenChange={handleOpenChange}>
+        {children}
+      </RadixDialog.Root>
+    </DialogContext.Provider>
+  );
+};
+
+interface DialogTriggerProps {
+  children: React.ReactNode;
+  asChild?: boolean;
+}
+
+const DialogTrigger = ({ children, asChild }: DialogTriggerProps) => {
+  return (
+    <RadixDialog.Trigger asChild={asChild}>{children}</RadixDialog.Trigger>
+  );
+};
+
+interface DialogContentProps {
+  children: React.ReactNode;
+  className?: string;
+}
+
+const DialogContent = ({ children, className }: DialogContentProps) => {
+  const { open } = useDialog();
+  const { getOverlayVariants, getContentVariants } = useDialogAnimation();
+
+  return (
+    <AnimatePresence>
+      {open && (
+        <RadixDialog.Portal forceMount>
+          <RadixDialog.Overlay asChild>
+            <motion.div
+              className="fixed inset-0 z-50 bg-black/50"
+              variants={getOverlayVariants()}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+            />
+          </RadixDialog.Overlay>
+
+          <RadixDialog.Content asChild>
+            <motion.div
+              variants={getContentVariants()}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              className={cn(
+                "fixed left-[50%] top-[50%] z-50 w-full max-w-lg -translate-x-1/2 -translate-y-1/2",
+                "bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6",
+                "origin-[50%_50%]",
+                className
+              )}
+            >
+              <AnimateList staggerChildren={0.05} delayChildren={0.1}>
+                {children}
+              </AnimateList>
+
+              <AnimateMount>
+                <RadixDialog.Close
+                  className={cn(
+                    "absolute right-4 top-4 rounded-sm opacity-70",
+                    "transition-all duration-200",
+                    "hover:opacity-100 hover:rotate-90",
+                    "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+                    "disabled:pointer-events-none"
+                  )}
+                >
+                  <X className="h-4 w-4" />
+                  <span className="sr-only">Close</span>
+                </RadixDialog.Close>
+              </AnimateMount>
+            </motion.div>
+          </RadixDialog.Content>
+        </RadixDialog.Portal>
+      )}
+    </AnimatePresence>
+  );
+};
+
+const DialogHeader = ({ className, ...props }: HTMLMotionProps<"div">) => {
+  const { getChildVariants } = useDialogAnimation();
+
+  return (
+    <motion.div
+      variants={getChildVariants()}
       className={cn(
-        "fixed inset-0 z-50",
-        "bg-black/40 backdrop-blur-sm dark:bg-black/60",
-        "duration-normal ease-natural",
-        className,
+        "flex flex-col space-y-1.5 text-center sm:text-left",
+        className
       )}
       {...props}
-      asChild
-    >
-      <AnimateMount
-        variants={{
-          initial: { opacity: 0 },
-          animate: {
-            opacity: 1,
-            transition: { duration: 0.3, ease: "easeOut" },
-          },
-          exit: { opacity: 0, transition: { duration: 0.2, ease: "easeIn" } },
-        }}
-        initial={prefersReducedMotion ? false : "initial"}
-      >
-        <div />
-      </AnimateMount>
-    </DialogPrimitive.Overlay>
+    />
   );
-});
-DialogOverlay.displayName = DialogPrimitive.Overlay.displayName;
+};
 
-const DialogContent = React.forwardRef<
-  React.ElementRef<typeof DialogPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content> & {
-    size?: "sm" | "md" | "lg" | "xl" | "full";
-    position?: "center" | "bottom";
-  }
->(
-  (
-    { className, children, size = "md", position = "center", ...props },
-    ref,
-  ) => {
-    const prefersReducedMotion = useReducedMotion();
+const DialogFooter = ({ className, ...props }: HTMLMotionProps<"div">) => {
+  const { getChildVariants } = useDialogAnimation();
 
-    const sizeClasses = {
-      sm: "max-w-sm",
-      md: "max-w-md",
-      lg: "max-w-lg",
-      xl: "max-w-xl",
-      full: "max-w-full mx-4",
-    };
+  return (
+    <motion.div
+      variants={getChildVariants()}
+      className={cn(
+        "flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2",
+        className
+      )}
+      {...props}
+    />
+  );
+};
 
-    const positionClasses = {
-      center: "top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]",
-      bottom: "bottom-0 left-0 right-0 translate-y-0 sm:bottom-4",
-    };
+type DialogTitleProps = React.ComponentProps<typeof RadixDialog.Title> & {
+  className?: string;
+};
 
-    const getContentVariants = () => ({
-      initial: {
-        opacity: 0,
-        scale: 0.95,
-        y: position === "bottom" ? 20 : 0,
-      },
-      animate: {
-        opacity: 1,
-        scale: 1,
-        y: 0,
-        transition: {
-          duration: 0.3,
-          ease: [0.16, 1, 0.3, 1],
-        },
-      },
-      exit: {
-        opacity: 0,
-        scale: 0.95,
-        y: position === "bottom" ? 20 : 0,
-        transition: {
-          duration: 0.2,
-          ease: [0.32, 0, 0.67, 0],
-        },
-      },
-    });
+const DialogTitle = React.forwardRef<HTMLHeadingElement, DialogTitleProps>(
+  ({ className, children, ...props }, ref) => {
+    const { getChildVariants } = useDialogAnimation();
 
     return (
-      <DialogPortal>
-        <DialogOverlay />
-        <DialogPrimitive.Content
+      <RadixDialog.Title asChild {...props}>
+        <motion.h2
           ref={ref}
+          variants={getChildVariants()}
           className={cn(
-            "fixed z-50 w-full",
-            sizeClasses[size],
-            positionClasses[position],
-            "border p-6 shadow-lg",
-            "bg-surface text-content",
-            "dark:bg-surface dark:text-content",
-            "border-neutral-200 dark:border-neutral-800",
-            position === "bottom" ? "rounded-t-lg sm:rounded-lg" : "rounded-lg",
-            "duration-normal ease-natural",
-            className,
+            "text-lg font-semibold leading-none tracking-tight",
+            className
           )}
-          {...props}
-          asChild
         >
-          <AnimateMount
-            variants={getContentVariants()}
-            initial={prefersReducedMotion ? false : "initial"}
-          >
-            <div className="relative">
-              {children}
-              <DialogClose />
-            </div>
-          </AnimateMount>
-        </DialogPrimitive.Content>
-      </DialogPortal>
+          {children}
+        </motion.h2>
+      </RadixDialog.Title>
     );
-  },
+  }
 );
-DialogContent.displayName = DialogPrimitive.Content.displayName;
 
-const DialogClose = React.forwardRef<
-  React.ElementRef<typeof DialogPrimitive.Close>,
-  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Close>
->(({ className, ...props }, ref) => (
-  <DialogPrimitive.Close
-    ref={ref}
-    className={cn(
-      "absolute right-0 top-0",
-      "rounded-sm opacity-70",
-      "hover:opacity-100",
-      "focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2",
-      "disabled:pointer-events-none",
-      "text-neutral-500 hover:text-neutral-700",
-      "dark:text-neutral-400 dark:hover:text-neutral-200",
-      className,
-    )}
-    {...props}
-  >
-    <AnimateMount
-      variants={{
-        initial: { opacity: 0, scale: 0.8 },
-        animate: {
-          opacity: 1,
-          scale: 1,
-          transition: { delay: 0.1, duration: 0.2 },
-        },
-        exit: { opacity: 0, scale: 0.8 },
-      }}
-    >
-      <X className="size-4" />
-      <span
-        className={cn("sr-only", "text-neutral-900", "dark:text-neutral-50")}
-      >
-        Close
-      </span>
-    </AnimateMount>
-  </DialogPrimitive.Close>
-));
-DialogClose.displayName = DialogPrimitive.Close.displayName;
+DialogTitle.displayName = "DialogTitle";
 
-const DialogHeader = React.forwardRef<
-  HTMLDivElement,
-  AnimatePresenceGroupProps
->(({ className, children, ...props }, ref) => {
-  const { getContainerVariants, getItemVariants } = useStaggerAnimation({
-    staggerChildren: 0.1,
-    delayChildren: 0.2,
-  });
-
-  const childrenArray = React.Children.toArray(children);
-
-  return (
-    <AnimatePresenceGroup
-      ref={ref}
-      {...props}
-      className={cn("flex flex-col gap-1.5 text-start", className)}
-      customVariants={getContainerVariants()}
-    >
-      {childrenArray.map((child, index) => (
-        <motion.div
-          key={index}
-          variants={getItemVariants()}
-          initial="initial"
-          animate="animate"
-          exit="exit"
-          className="w-full"
-        >
-          {child}
-        </motion.div>
-      ))}
-    </AnimatePresenceGroup>
-  );
-});
-DialogHeader.displayName = "DialogHeader";
-
-const DialogFooter = React.forwardRef<
-  HTMLDivElement,
-  AnimatePresenceGroupProps
->(({ className, children, ...props }, ref) => {
-  const { getContainerVariants, getItemVariants } = useStaggerAnimation({
-    staggerChildren: 0.05,
-    delayChildren: 0.3,
-  });
-
-  const childrenArray = React.Children.toArray(children);
-
-  return (
-    <AnimatePresenceGroup
-      ref={ref}
-      {...props}
-      className={cn(
-        "flex flex-col-reverse gap-2",
-        "sm:flex-row sm:justify-end sm:gap-2",
-        className,
-      )}
-      customVariants={getContainerVariants()}
-    >
-      {childrenArray.map((child, index) => (
-        <motion.div
-          key={index}
-          variants={getItemVariants()}
-          initial="initial"
-          animate="animate"
-          exit="exit"
-          className="w-full sm:w-auto"
-        >
-          {child}
-        </motion.div>
-      ))}
-    </AnimatePresenceGroup>
-  );
-});
-DialogFooter.displayName = "DialogFooter";
-
-const DialogTitle = React.forwardRef<
-  React.ElementRef<typeof DialogPrimitive.Title>,
-  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Title>
->(({ className, ...props }, ref) => (
-  <DialogPrimitive.Title
-    ref={ref}
-    className={cn(
-      "text-lg font-semibold leading-none tracking-tight",
-      "text-content dark:text-content",
-      className,
-    )}
-    {...props}
-  />
-));
-DialogTitle.displayName = DialogPrimitive.Title.displayName;
+type DialogDescriptionProps = React.ComponentProps<
+  typeof RadixDialog.Description
+> & {
+  className?: string;
+};
 
 const DialogDescription = React.forwardRef<
-  React.ElementRef<typeof DialogPrimitive.Description>,
-  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Description>
->(({ className, ...props }, ref) => (
-  <DialogPrimitive.Description
-    ref={ref}
-    className={cn(
-      "text-sm",
-      "text-content-subtle dark:text-content-subtle",
-      className,
-    )}
-    {...props}
-  />
-));
-DialogDescription.displayName = DialogPrimitive.Description.displayName;
+  HTMLParagraphElement,
+  DialogDescriptionProps
+>(({ className, children, ...props }, ref) => {
+  const { getChildVariants } = useDialogAnimation();
 
-export {
-  Dialog,
-  DialogPortal,
-  DialogOverlay,
-  DialogTrigger,
-  DialogContent,
-  DialogClose,
-  DialogHeader,
-  DialogFooter,
-  DialogTitle,
-  DialogDescription,
-};
+  return (
+    <RadixDialog.Description asChild {...props}>
+      <motion.p
+        ref={ref}
+        variants={getChildVariants()}
+        className={cn("text-sm text-muted-foreground", className)}
+      >
+        {children}
+      </motion.p>
+    </RadixDialog.Description>
+  );
+});
+
+DialogDescription.displayName = "DialogDescription";
+
+Dialog.Trigger = DialogTrigger;
+Dialog.Content = DialogContent;
+Dialog.Header = DialogHeader;
+Dialog.Footer = DialogFooter;
+Dialog.Title = DialogTitle;
+Dialog.Description = DialogDescription;
+
+export { Dialog };

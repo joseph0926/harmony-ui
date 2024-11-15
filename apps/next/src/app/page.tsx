@@ -1,5 +1,9 @@
-import { DialogDefault } from "@/components/dialog";
+import { CustomDialog } from "@/components/dialog";
 
 export default function Home() {
-  return <DialogDefault />;
+  return (
+    <div className="flex flex-col gap-20">
+      <CustomDialog />
+    </div>
+  );
 }
