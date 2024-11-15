@@ -1,5 +1,10 @@
-import { DialogDefault } from "@/components/dialog";
+import { CustomDialog } from "@/components/dialog";
+import { CustomSheet } from "@/components/sheet";
 
 export default function Home() {
-  return <DialogDefault />;
+  return (
+    <div className="flex flex-col gap-20">
+      <CustomSheet />
+    </div>
+  );
 }

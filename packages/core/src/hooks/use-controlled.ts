@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 
 interface UseControlledProps<T> {
   controlled: T | undefined;
@@ -13,21 +13,23 @@ export function useControlled<T>({
   name,
   state = "value",
 }: UseControlledProps<T>) {
-  const { current: isControlled } = React.useRef(controlled !== undefined);
+  const isControlled = controlled !== undefined;
+  const { current: wasControlled } = useRef(isControlled);
   const [valueState, setValue] = useState(defaultProp);
   const value = isControlled ? controlled : valueState;
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (process.env.NODE_ENV !== "production") {
-      if (isControlled !== (controlled !== undefined)) {
-        console.error(
-          `[@harmony-ui/core] ${name} component is changing from ${
-            isControlled ? "controlled" : "uncontrolled"
-          } to ${isControlled ? "uncontrolled" : "controlled"} for "${state}" prop.`,
+      if (isControlled !== wasControlled) {
+        console.warn(
+          `[@harmony-ui/core] The component '${name}' is changing from ${
+            wasControlled ? "controlled" : "uncontrolled"
+          } to ${isControlled ? "controlled" : "uncontrolled"}. ` +
+            `Decide between using a controlled or uncontrolled '${state}' for the lifetime of the component.`
         );
       }
     }
-  }, [state, name, controlled, isControlled]);
+  }, [name, state, isControlled, wasControlled]);
 
   const setValueIfUncontrolled = useCallback(
     (newValue: T) => {
@@ -35,7 +37,7 @@ export function useControlled<T>({
         setValue(newValue);
       }
     },
-    [isControlled],
+    [isControlled]
   );
 
   return [value, setValueIfUncontrolled] as const;

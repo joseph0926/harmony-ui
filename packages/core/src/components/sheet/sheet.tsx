@@ -4,10 +4,10 @@ import React from "react";
 import * as RadixDialog from "@radix-ui/react-dialog";
 import { motion } from "framer-motion";
 import { cn } from "../../utils";
-import { fadeVariants, scaleVariants } from "@harmony-ui/animations";
+import { fadeVariants, createSlideVariants } from "@harmony-ui/animations";
 import { useAnimationContext } from "@harmony-ui/animations";
 
-interface DialogProps {
+interface SheetProps {
   children: React.ReactNode;
   trigger: React.ReactNode;
   open?: boolean;
@@ -15,16 +15,18 @@ interface DialogProps {
   className?: string;
 }
 
-export const Dialog = ({
+export const Sheet = ({
   children,
   trigger,
   open,
   onOpenChange,
   className,
-}: DialogProps) => {
+}: SheetProps) => {
   const { prefersReducedMotion } = useAnimationContext();
 
-  const variants = prefersReducedMotion ? fadeVariants : scaleVariants;
+  const variants = prefersReducedMotion
+    ? fadeVariants
+    : createSlideVariants("up", 50);
 
   return (
     <RadixDialog.Root open={open} onOpenChange={onOpenChange}>
@@ -47,8 +49,8 @@ export const Dialog = ({
             exit="exit"
             variants={variants}
             className={cn(
-              "fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2",
-              "bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6",
+              "fixed bottom-0 left-0 right-0",
+              "bg-white dark:bg-gray-800 rounded-t-lg shadow-lg p-6",
               className
             )}
           >

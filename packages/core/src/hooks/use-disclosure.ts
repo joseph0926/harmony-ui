@@ -1,5 +1,4 @@
 import { useCallback } from "react";
-
 import { useControlled } from "./use-controlled";
 
 interface UseDisclosureProps {
@@ -47,5 +46,5 @@ export function useDisclosure(props: UseDisclosureProps = {}) {
     onOpen,
     onClose,
     onToggle,
-  };
+  } as const;
 }
