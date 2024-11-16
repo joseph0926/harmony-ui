@@ -12,10 +12,12 @@
     "@harmony-ui/animations": "workspace:*",
     "@harmony-ui/core": "workspace:*",
     "@harmony-ui/theme": "workspace:*",
+    "clsx": "^2.1.1",
     "framer-motion": "^11.11.13",
     "next": "15.0.3",
     "react": "19.0.0-rc-66855b96-20241106",
-    "react-dom": "19.0.0-rc-66855b96-20241106"
+    "react-dom": "19.0.0-rc-66855b96-20241106",
+    "tailwind-merge": "^2.5.4"
   },
   "devDependencies": {
     "@types/node": "^20",

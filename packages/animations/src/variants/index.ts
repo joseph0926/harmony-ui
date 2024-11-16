@@ -1,172 +1,195 @@
-import { type Variants } from "framer-motion";
-import { createVariants } from "../utils/createVariants";
-import { animationDurations, animationEasings } from "../constants/animation";
+import { Variants } from "framer-motion";
+import { DURATIONS, EASINGS } from "../constants/animation";
 
-export const slideUpVariants = createVariants(
-  {
+export const fadeVariants: Variants = {
+  initial: { opacity: 0 },
+  animate: { opacity: 1 },
+  exit: { opacity: 0 },
+};
+
+export const scaleVariants = {
+  center: {
+    initial: { scale: 0, opacity: 0 },
+    animate: { scale: 1, opacity: 1 },
+    exit: { scale: 0, opacity: 0 },
+  },
+  up: {
+    initial: { scaleY: 0, opacity: 0, originY: 1 },
+    animate: { scaleY: 1, opacity: 1, originY: 1 },
+    exit: { scaleY: 0, opacity: 0, originY: 1 },
+  },
+  down: {
+    initial: { scaleY: 0, opacity: 0, originY: 0 },
+    animate: { scaleY: 1, opacity: 1, originY: 0 },
+    exit: { scaleY: 0, opacity: 0, originY: 0 },
+  },
+  left: {
+    initial: { scaleX: 0, opacity: 0, originX: 1 },
+    animate: { scaleX: 1, opacity: 1, originX: 1 },
+    exit: { scaleX: 0, opacity: 0, originX: 1 },
+  },
+  right: {
+    initial: { scaleX: 0, opacity: 0, originX: 0 },
+    animate: { scaleX: 1, opacity: 1, originX: 0 },
+    exit: { scaleX: 0, opacity: 0, originX: 0 },
+  },
+};
+
+export const slideVariants = {
+  up: {
     initial: { y: 20, opacity: 0 },
     animate: { y: 0, opacity: 1 },
     exit: { y: 20, opacity: 0 },
   },
-  {
-    transition: {
-      duration: animationDurations.medium,
-      ease: animationEasings.natural,
-    },
-    exitTransition: {
-      duration: animationDurations.short,
-      ease: animationEasings.easeIn,
-    },
-  }
-);
-
-export const fadeVariants = createVariants(
-  {
-    initial: { opacity: 0 },
-    animate: { opacity: 1 },
-    exit: { opacity: 0 },
+  down: {
+    initial: { y: -20, opacity: 0 },
+    animate: { y: 0, opacity: 1 },
+    exit: { y: -20, opacity: 0 },
   },
-  {
-    transition: {
-      duration: animationDurations.medium,
-      ease: animationEasings.easeOut,
-    },
-    exitTransition: {
-      duration: animationDurations.short,
-      ease: animationEasings.easeIn,
-    },
-  }
-);
+  left: {
+    initial: { x: 20, opacity: 0 },
+    animate: { x: 0, opacity: 1 },
+    exit: { x: 20, opacity: 0 },
+  },
+  right: {
+    initial: { x: -20, opacity: 0 },
+    animate: { x: 0, opacity: 1 },
+    exit: { x: -20, opacity: 0 },
+  },
+};
 
-export const createSlideVariants = (
-  direction: "up" | "down" | "left" | "right",
-  distance: number = 20
-): Variants => {
-  const axis = direction === "up" || direction === "down" ? "y" : "x";
-  const sign = direction === "up" || direction === "left" ? -1 : 1;
+export const rotateVariants = {
+  flip: {
+    initial: { rotateX: 90, opacity: 0 },
+    animate: { rotateX: 0, opacity: 1 },
+    exit: { rotateX: 90, opacity: 0 },
+  },
+  spin: {
+    initial: { rotate: 180, opacity: 0 },
+    animate: { rotate: 0, opacity: 1 },
+    exit: { rotate: -180, opacity: 0 },
+  },
+  spiral: {
+    initial: { rotate: 360, scale: 0, opacity: 0 },
+    animate: { rotate: 0, scale: 1, opacity: 1 },
+    exit: { rotate: -360, scale: 0, opacity: 0 },
+  },
+};
 
-  return createVariants(
-    {
-      initial: { [axis]: sign * distance, opacity: 0 },
-      animate: { [axis]: 0, opacity: 1 },
-      exit: { [axis]: sign * distance, opacity: 0 },
+export const specialVariants = {
+  bounce: {
+    initial: { scale: 0.3, opacity: 0 },
+    animate: {
+      scale: [0.3, 1.1, 0.9, 1],
+      opacity: 1,
     },
-    {
+    exit: {
+      scale: [1, 0.9, 1.1, 0.3],
+      opacity: 0,
+    },
+  },
+  rubber: {
+    initial: { scale: 1, opacity: 0 },
+    animate: {
+      scale: [1, 1.25, 0.75, 1.15, 0.95, 1],
+      opacity: 1,
+    },
+    exit: {
+      scale: [1, 0.95, 1.15, 0.75, 1.25, 1],
+      opacity: 0,
+    },
+  },
+  pulse: {
+    initial: { scale: 1, opacity: 0 },
+    animate: {
+      scale: [1, 1.05, 1],
+      opacity: 1,
+    },
+    exit: {
+      scale: [1, 1.05, 1],
+      opacity: 0,
+    },
+  },
+};
+
+export const combinationVariants = {
+  fadeSlideUp: {
+    initial: { y: 20, opacity: 0 },
+    animate: { y: 0, opacity: 1 },
+    exit: { y: -20, opacity: 0 },
+  },
+  scaleRotate: {
+    initial: { scale: 0, rotate: 180, opacity: 0 },
+    animate: { scale: 1, rotate: 0, opacity: 1 },
+    exit: { scale: 0, rotate: -180, opacity: 0 },
+  },
+  elasticScale: {
+    initial: { scale: 0, opacity: 0 },
+    animate: {
+      scale: [0, 1.2, 0.9, 1.1, 0.95, 1],
+      opacity: 1,
+    },
+    exit: {
+      scale: [1, 0.95, 1.1, 0.9, 1.2, 0],
+      opacity: 0,
+    },
+  },
+};
+
+export const staggerVariants = {
+  container: {
+    initial: {},
+    animate: {
       transition: {
-        duration: animationDurations.medium,
-        ease: animationEasings.natural,
+        staggerChildren: 0.1,
       },
-      exitTransition: {
-        duration: animationDurations.short,
-        ease: animationEasings.easeIn,
+    },
+    exit: {
+      transition: {
+        staggerChildren: 0.05,
+        staggerDirection: -1,
       },
-    }
-  );
+    },
+  },
+  item: fadeVariants,
 };
 
-export const scaleVariants = createVariants(
-  {
-    initial: { scale: 0.95, opacity: 0 },
-    animate: { scale: 1, opacity: 1 },
-    exit: { scale: 0.95, opacity: 0 },
-  },
-  {
+export const interactionVariants = {
+  hover: {
+    scale: 1.05,
     transition: {
-      duration: animationDurations.medium,
-      ease: animationEasings.emphasized,
+      duration: DURATIONS.fast,
+      ease: EASINGS.spring,
     },
-    exitTransition: {
-      duration: animationDurations.short,
-      ease: animationEasings.easeIn,
-    },
-  }
-);
-
-export const popVariants = createVariants(
-  {
-    initial: { scale: 0.9, opacity: 0, y: 10 },
-    animate: { scale: 1, opacity: 1, y: 0 },
-    exit: { scale: 0.9, opacity: 0, y: 10 },
   },
-  {
+  tap: {
+    scale: 0.95,
     transition: {
-      duration: animationDurations.medium,
-      ease: animationEasings.bounce,
+      duration: DURATIONS.fastest,
+      ease: EASINGS.spring,
     },
-    exitTransition: {
-      duration: animationDurations.short,
-      ease: animationEasings.easeIn,
-    },
-  }
-);
-
-interface SpringConfig {
-  stiffness: number;
-  damping: number;
-  mass: number;
-}
-
-export const springs = {
-  gentle: {
-    stiffness: 100,
-    damping: 20,
-    mass: 1,
   },
-  bouncy: {
-    stiffness: 300,
-    damping: 10,
-    mass: 1,
-  },
-  stiff: {
-    stiffness: 500,
-    damping: 30,
-    mass: 1,
-  },
-  slow: {
-    stiffness: 50,
-    damping: 15,
-    mass: 1,
-  },
-} as const;
-
-export const createSpring = (config: Partial<SpringConfig> = {}) => ({
-  type: "spring" as const,
-  ...springs.gentle,
-  ...config,
-});
-
-interface CreateTransitionOptions {
-  duration?: keyof typeof animationDurations;
-  delay?: number;
-  ease?: keyof typeof animationEasings;
-}
-
-export const createTransition = (options: CreateTransitionOptions = {}) => {
-  const { duration = "medium", delay = 0, ease = "easeInOut" } = options;
-
-  return {
-    duration: animationDurations[duration],
-    delay,
-    ease: animationEasings[ease],
-  };
 };
 
-interface CreateStaggerOptions {
-  staggerChildren?: number;
-  delayChildren?: number;
-  staggerDirection?: 1 | -1;
-}
-
-export const createStagger = (options: CreateStaggerOptions = {}) => {
-  const {
-    staggerChildren = 0.05,
-    delayChildren = 0,
-    staggerDirection = 1,
-  } = options;
-
-  return {
-    staggerChildren,
-    delayChildren,
-    staggerDirection,
-  };
+export const pageTransitionVariants = {
+  initial: {
+    opacity: 0,
+    scale: 0.96,
+  },
+  animate: {
+    opacity: 1,
+    scale: 1,
+    transition: {
+      duration: DURATIONS.normal,
+      ease: EASINGS.spring,
+    },
+  },
+  exit: {
+    opacity: 0,
+    scale: 0.96,
+    transition: {
+      duration: DURATIONS.fast,
+      ease: EASINGS.easeOut,
+    },
+  },
 };

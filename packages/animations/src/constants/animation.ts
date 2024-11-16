@@ -1,16 +1,13 @@
-export const animationDurations = {
+export const DURATIONS = {
   fastest: 0.15,
-  short: 0.2,
-  medium: 0.3,
-  long: 0.5,
-  longest: 0.7,
+  fast: 0.25,
+  normal: 0.35,
+  slow: 0.5,
+  slowest: 0.7,
 } as const;
 
-export const animationEasings = {
-  easeInOut: [0.4, 0, 0.2, 1],
-  easeOut: [0, 0, 0.2, 1],
-  easeIn: [0.4, 0, 1, 1],
-  emphasized: [0.2, 0, 0, 1],
-  natural: [0.16, 1, 0.3, 1],
-  bounce: [0.175, 0.885, 0.32, 1.275],
+export const EASINGS = {
+  easeOut: [0.16, 1, 0.3, 1],
+  spring: [0.37, 0, 0.63, 1],
+  bounce: [0.68, -0.6, 0.32, 1.6],
 } as const;
